@@ -134,6 +134,7 @@ UPROGS=\
 	$U/_zombie\
 	$U/_salaam\
 	$U/_retint\
+	$U/_stat\
 
 fs.img: mkfs/mkfs $(UPROGS)
 	mkfs/mkfs fs.img $(UPROGS)

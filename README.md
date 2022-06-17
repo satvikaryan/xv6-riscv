@@ -1,7 +1,47 @@
 # xv6-riscv
 Modified Version of MIT's XV6 Operating System
 
-## salaam Command
+## Installation
+### Install Requirements
+```
+sudo apt update
+sudo apt upgrade
+sudo apt install gcc make build-essential gdb-multiarch qemu-system-misc gcc-riscv64-linux-gnu binutils-riscv64-linux-gnu
+```
+
+### Clone XV6 Repository
+```
+git clone https://github.com/JameelKaisar/xv6-riscv.git
+```
+
+### Change Directory
+```
+cd xv6-riscv
+```
+
+### Compile XV6
+```
+make
+```
+
+### Run XV6
+```
+make qemu
+```
+
+### Quit XV6
+```
+Crtl+a
+x
+```
+
+### Recompile and Run
+```
+make clean && make && make qemu && make clean && clear
+```
+
+## Commands
+### salaam Command
 ```
 $ salaam
 Salaam Robo! Kaifa Haluka?
@@ -12,13 +52,13 @@ $ salaam Ajmi
 Salaam Ajmi! Kaifa Haluka?
 ```
 
-## retint Command
+### retint Command
 ```
 $ retint
 2022
 ```
 
-## stat Command
+### stat Command
 ```
 $ stat grep
 ID of Disk Device:  1
@@ -37,7 +77,7 @@ Number of Links:    1
 Size:               0
 ```
 
-## dir Command
+### dir Command
 ```
 $ dir .
 ----------------------------------------------------------

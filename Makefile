@@ -135,6 +135,7 @@ UPROGS=\
 	$U/_salaam\
 	$U/_retint\
 	$U/_stat\
+	$U/_dir\
 
 fs.img: mkfs/mkfs $(UPROGS)
 	mkfs/mkfs fs.img $(UPROGS)

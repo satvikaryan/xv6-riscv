@@ -99,5 +99,16 @@ sys_uptime(void)
 uint64
 sys_retint()
 {
-  return 2022;
+  return 2024;
+}
+
+
+//return the year of which
+//Unix version 6 was released
+
+uint64 
+sys_getyear(void) 
+{
+
+return 1975;
 }

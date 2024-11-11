@@ -136,6 +136,8 @@ UPROGS=\
 	$U/_retint\
 	$U/_stat\
 	$U/_dir\
+	$U/_test\
+	$U/_testyear\
 
 fs.img: mkfs/mkfs $(UPROGS)
 	mkfs/mkfs fs.img $(UPROGS)

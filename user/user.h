@@ -1,3 +1,4 @@
+#include "kernel/types.h"
 struct stat;
 struct rtcdate;
 
@@ -24,6 +25,7 @@ char* sbrk(int);
 int sleep(int);
 int uptime(void);
 int retint(void);
+int getyear(void);
 
 // ulib.c
 int stat(const char*, struct stat*);

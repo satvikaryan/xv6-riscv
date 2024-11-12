@@ -665,7 +665,7 @@ sys_kilpid(void) {
 }
 
 // sys_getpid: returns the pid of the calling process
-uint64
-sys_getpid(void) {
-    return myproc()->pid;
-}
+// uint64
+// sys_getpid(void) {
+//     return myproc()->pid;
+// }

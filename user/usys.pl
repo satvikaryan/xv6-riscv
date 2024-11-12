@@ -38,5 +38,5 @@ entry("sleep");
 entry("uptime");
 entry("retint");
 entry("getyear");
-entry("kilpid");
 entry("getppid");
+entry("killpid");

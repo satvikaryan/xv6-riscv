@@ -138,7 +138,8 @@ UPROGS=\
 	$U/_dir\
 	$U/_test\
 	$U/_testyear\
-	$U/_testkillpid\
+	$U/_getppid\
+	$U/_killpid\
 
 
 fs.img: mkfs/mkfs $(UPROGS)

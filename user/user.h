@@ -26,8 +26,8 @@ int sleep(int);
 int uptime(void);
 int retint(void);
 int getyear(void);
-int kilpid(int pid);
 int getppid(void);
+int killpid(int);
 
 // ulib.c
 int stat(const char*, struct stat*);

@@ -39,4 +39,4 @@ entry("uptime");
 entry("retint");
 entry("getyear");
 entry("kilpid");
-entry("getpid");
+entry("getppid");

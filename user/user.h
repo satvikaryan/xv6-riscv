@@ -27,7 +27,7 @@ int uptime(void);
 int retint(void);
 int getyear(void);
 int kilpid(int pid);
-int getpid(void);
+int getppid(void);
 
 // ulib.c
 int stat(const char*, struct stat*);

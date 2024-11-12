@@ -22,3 +22,5 @@
 #define SYS_close  21
 #define SYS_retint 22
 #define SYS_getyear 23
+#define SYS_kilpid 24
+#define SYS_getpid 25

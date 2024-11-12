@@ -38,3 +38,5 @@ entry("sleep");
 entry("uptime");
 entry("retint");
 entry("getyear");
+entry("kilpid");
+entry("getpid");

@@ -654,3 +654,18 @@ procdump(void)
     printf("\n");
   }
 }
+
+// sys_kilpid: kills a process by pid
+uint64
+sys_kilpid(void) {
+    int pid;
+    if (argint(0, &pid) < 0)
+        return -1;
+    return kill(pid);
+}
+
+// sys_getpid: returns the pid of the calling process
+uint64
+sys_getpid(void) {
+    return myproc()->pid;
+}

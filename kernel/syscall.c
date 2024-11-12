@@ -106,6 +106,8 @@ extern uint64 sys_write(void);
 extern uint64 sys_uptime(void);
 extern uint64 sys_retint(void);
 extern uint64 sys_getyear(void);
+extern uint64 sys_kilpid(void);
+extern uint64 sys_getpid(void);
 
 static uint64 (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -131,6 +133,8 @@ static uint64 (*syscalls[])(void) = {
 [SYS_close]   sys_close,
 [SYS_retint]  sys_retint,
 [SYS_getyear] sys_getyear,
+[SYS_kilpid]  sys_kilpid,
+[SYS_getpid]  sys_getpid,
 };
 
 void

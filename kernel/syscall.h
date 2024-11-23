@@ -28,3 +28,7 @@
 #define SYS_shmat  28
 #define SYS_shmdt  29
 #define SYS_shmctl 30
+#define SYS_msgget  31
+#define SYS_msgsend 22
+#define SYS_msgrcv  33
+#define SYS_msgclose 34

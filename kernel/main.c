@@ -5,7 +5,7 @@
 #include "defs.h"
 
 volatile static int started = 0;
-
+extern void msgqueue_init(void);
 // start() jumps here in supervisor mode on all CPUs.
 void
 main()
@@ -43,6 +43,6 @@ main()
     trapinithart();   // install kernel trap vector
     plicinithart();   // ask PLIC for device interrupts
   }
-
+  msgqueue_init();
   scheduler();        
 }

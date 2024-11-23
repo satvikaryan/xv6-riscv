@@ -32,6 +32,10 @@ int shmget(int,int,int);
 void *shmat(int);
 int shmdt(int);
 int shmctl(int,int);
+uint64 msgget(void);
+uint64 msgsend(int qid, char*, int);
+uint64 msgrcv(int qid, char*, int);
+uint64 msgclose(int qid);
 
 // ulib.c
 int stat(const char*, struct stat*);

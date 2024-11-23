@@ -44,3 +44,7 @@ entry("shmget");
 entry("shmat");
 entry("shmdt");
 entry("shmctl");
+entry("msgget");
+entry("msgsend");
+entry("msgrcv");
+entry("msgclose");

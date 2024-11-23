@@ -192,3 +192,9 @@ int             shmctl(int shmid,int cmd);
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
+
+uint64 sys_msgget(void);
+uint64 sys_msgsend(void);
+uint64 sys_msgrcv(void);
+uint64 sys_msgclose(void);
+// void            msgqueue_init(void);

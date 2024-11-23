@@ -112,6 +112,10 @@ extern uint64 sys_shmget(void);
 extern uint64 sys_shmat(void);
 extern uint64 sys_shmdt(void);
 extern uint64 sys_shmctl(void);
+extern uint64 sys_msgget(void);
+extern uint64 sys_msgsend(void);
+extern uint64 sys_msgrcv(void);
+extern uint64 sys_msgclose(void);
 
 static uint64 (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -143,6 +147,10 @@ static uint64 (*syscalls[])(void) = {
 [SYS_shmat]     sys_shmat,
 [SYS_shmdt]     sys_shmdt,
 [SYS_shmctl]    sys_shmctl,
+[SYS_msgget]    sys_msgget,
+[SYS_msgsend]   sys_msgsend,
+[SYS_msgrcv]    sys_msgrcv,
+[SYS_msgclose]  sys_msgclose,
 };
 
 void

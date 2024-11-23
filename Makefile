@@ -1,44 +1,56 @@
 K=kernel
 U=user
 
-OBJS = \
-  $K/entry.o \
-  $K/start.o \
-  $K/console.o \
-  $K/printf.o \
-  $K/uart.o \
-  $K/kalloc.o \
-  $K/spinlock.o \
-  $K/string.o \
-  $K/main.o \
-  $K/vm.o \
-  $K/proc.o \
-  $K/swtch.o \
-  $K/trampoline.o \
-  $K/trap.o \
-  $K/syscall.o \
-  $K/sysproc.o \
-  $K/bio.o \
-  $K/fs.o \
-  $K/log.o \
-  $K/sleeplock.o \
-  $K/file.o \
-  $K/pipe.o \
-  $K/exec.o \
-  $K/sysfile.o \
-  $K/kernelvec.o \
-  $K/plic.o \
-  $K/virtio_disk.o \
-  $K/shm.o \
-  $K/msgqueue.o \
+# Directory structure
+BUILD_DIR = build
+ASM_DIR = $(BUILD_DIR)/asm
+SYM_DIR = $(BUILD_DIR)/sym
+OBJ_DIR = $(BUILD_DIR)/obj
+KERNEL_OBJ_DIR = $(OBJ_DIR)/kernel
+USER_OBJ_DIR = $(OBJ_DIR)/user
 
-# riscv64-unknown-elf- or riscv64-linux-gnu-
-# perhaps in /opt/riscv/bin
-#TOOLPREFIX = 
+# Create necessary directories
+$(shell mkdir -p $(ASM_DIR) $(SYM_DIR) $(KERNEL_OBJ_DIR) $(USER_OBJ_DIR))
 
-# Try to infer the correct TOOLPREFIX if not set
-ifndef TOOLPREFIX
-TOOLPREFIX := $(shell if riscv64-unknown-elf-objdump -i 2>&1 | grep 'elf64-big' >/dev/null 2>&1; \
+# Modify kernel object paths
+KOBJS = $(addprefix $(KERNEL_OBJ_DIR)/, \
+  entry.o \
+  start.o \
+  console.o \
+  printf.o \
+  uart.o \
+  kalloc.o \
+  spinlock.o \
+  string.o \
+  main.o \
+  vm.o \
+  proc.o \
+  swtch.o \
+  trampoline.o \
+  trap.o \
+  syscall.o \
+  sysproc.o \
+  bio.o \
+  fs.o \
+  log.o \
+  sleeplock.o \
+  file.o \
+  pipe.o \
+  exec.o \
+  sysfile.o \
+  kernelvec.o \
+  plic.o \
+  virtio_disk.o \
+  shm.o \
+  msgqueue.o \
+)
+
+# Host compiler settings
+HOST_CC = gcc
+HOST_CFLAGS = -Wall -I.
+
+# Tool definitions
+TOOLPREFIX ?= $(shell if riscv64-unknown-elf-objdump -i 2>&1 | grep 'elf64-big' >/dev/null 2>&1; \
 	then echo 'riscv64-unknown-elf-'; \
 	elif riscv64-linux-gnu-objdump -i 2>&1 | grep 'elf64-big' >/dev/null 2>&1; \
 	then echo 'riscv64-linux-gnu-'; \
@@ -48,141 +60,162 @@ TOOLPREFIX := $(shell if riscv64-unknown-elf-objdump -i 2>&1 | grep 'elf64-big' 
 	echo "*** Error: Couldn't find a riscv64 version of GCC/binutils." 1>&2; \
 	echo "*** To turn off this error, run 'gmake TOOLPREFIX= ...'." 1>&2; \
 	echo "***" 1>&2; exit 1; fi)
-endif
 
 QEMU = qemu-system-riscv64
-
 CC = $(TOOLPREFIX)gcc
 AS = $(TOOLPREFIX)gas
 LD = $(TOOLPREFIX)ld
 OBJCOPY = $(TOOLPREFIX)objcopy
 OBJDUMP = $(TOOLPREFIX)objdump
 
-CFLAGS = -Wall -O -fno-omit-frame-pointer -ggdb
-CFLAGS += -MD
-CFLAGS += -mcmodel=medany
-CFLAGS += -ffreestanding -fno-common -nostdlib -mno-relax
-CFLAGS += -I.
-CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
+# RISC-V compilation flags
+RISCV_CFLAGS = -Wall -O -fno-omit-frame-pointer -ggdb
+RISCV_CFLAGS += -MD
+RISCV_CFLAGS += -mcmodel=medany
+RISCV_CFLAGS += -ffreestanding -fno-common -nostdlib -mno-relax
+RISCV_CFLAGS += -I.
+RISCV_CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 
-# Disable PIE when possible (for Ubuntu 16.10 toolchain)
+# PIE settings
 ifneq ($(shell $(CC) -dumpspecs 2>/dev/null | grep -e '[^f]no-pie'),)
-CFLAGS += -fno-pie -no-pie
+RISCV_CFLAGS += -fno-pie -no-pie
 endif
 ifneq ($(shell $(CC) -dumpspecs 2>/dev/null | grep -e '[^f]nopie'),)
-CFLAGS += -fno-pie -nopie
+RISCV_CFLAGS += -fno-pie -nopie
 endif
 
 LDFLAGS = -z max-page-size=4096
 
-$K/kernel: $(OBJS) $K/kernel.ld $U/initcode
-	$(LD) $(LDFLAGS) -T $K/kernel.ld -o $K/kernel $(OBJS) 
-	$(OBJDUMP) -S $K/kernel > $K/kernel.asm
-	$(OBJDUMP) -t $K/kernel | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $K/kernel.sym
+# Core build targets
+$K/kernel: $(KOBJS) $K/kernel.ld $U/initcode
+	@echo "Building kernel..."
+	$(LD) $(LDFLAGS) -T $K/kernel.ld -o $K/kernel $(KOBJS)
+	$(OBJDUMP) -S $K/kernel > $(ASM_DIR)/kernel.asm
+	$(OBJDUMP) -t $K/kernel | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $(SYM_DIR)/kernel.sym
 
+# Kernel object compilation
+$(KERNEL_OBJ_DIR)/%.o: $K/%.c
+	$(CC) $(RISCV_CFLAGS) -c -o $@ $<
+
+$(KERNEL_OBJ_DIR)/%.o: $K/%.S
+	$(CC) $(RISCV_CFLAGS) -c -o $@ $<
+
+# Initcode compilation
 $U/initcode: $U/initcode.S
-	$(CC) $(CFLAGS) -march=rv64g -nostdinc -I. -Ikernel -c $U/initcode.S -o $U/initcode.o
-	$(LD) $(LDFLAGS) -N -e start -Ttext 0 -o $U/initcode.out $U/initcode.o
-	$(OBJCOPY) -S -O binary $U/initcode.out $U/initcode
-	$(OBJDUMP) -S $U/initcode.o > $U/initcode.asm
+	$(CC) $(RISCV_CFLAGS) -march=rv64g -nostdinc -I. -Ikernel -c $U/initcode.S -o $(USER_OBJ_DIR)/initcode.o
+	$(LD) $(LDFLAGS) -N -e start -Ttext 0 -o $(USER_OBJ_DIR)/initcode.out $(USER_OBJ_DIR)/initcode.o
+	$(OBJCOPY) -S -O binary $(USER_OBJ_DIR)/initcode.out $U/initcode
+	$(OBJDUMP) -S $(USER_OBJ_DIR)/initcode.o > $(ASM_DIR)/initcode.asm
 
-tags: $(OBJS) _init
-	etags *.S *.c
+# User library objects
+ULIB = $(addprefix $(USER_OBJ_DIR)/, ulib.o usys.o printf.o umalloc.o)
 
-ULIB = $U/ulib.o $U/usys.o $U/printf.o $U/umalloc.o
-
-_%: %.o $(ULIB)
+# User programs compilation
+$(USER_OBJ_DIR)/%: $(USER_OBJ_DIR)/%.o $(ULIB)
 	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o $@ $^
-	$(OBJDUMP) -S $@ > $*.asm
-	$(OBJDUMP) -t $@ | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $*.sym
+	$(OBJDUMP) -S $@ > $(ASM_DIR)/$*.asm
+	$(OBJDUMP) -t $@ | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $(SYM_DIR)/$*.sym
 
-$U/usys.S : $U/usys.pl
+# User object compilation
+$(USER_OBJ_DIR)/%.o: $U/%.c
+	$(CC) $(RISCV_CFLAGS) -c -o $@ $<
+
+$(USER_OBJ_DIR)/%.o: $U/%.S
+	$(CC) $(RISCV_CFLAGS) -c -o $@ $<
+
+# System call generation
+$U/usys.S: $U/usys.pl
 	perl $U/usys.pl > $U/usys.S
 
-$U/usys.o : $U/usys.S
-	$(CC) $(CFLAGS) -c -o $U/usys.o $U/usys.S
-
-$U/_forktest: $U/forktest.o $(ULIB)
-	# forktest has less library code linked in - needs to be small
-	# in order to be able to max out the proc table.
-	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o $U/_forktest $U/forktest.o $U/ulib.o $U/usys.o
-	$(OBJDUMP) -S $U/_forktest > $U/forktest.asm
-
+# mkfs compilation
 mkfs/mkfs: mkfs/mkfs.c $K/fs.h $K/param.h
-	gcc -Wall -I. -o mkfs/mkfs mkfs/mkfs.c
+	$(HOST_CC) $(HOST_CFLAGS) -o $@ $<
 
-# Prevent deletion of intermediate files, e.g. cat.o, after first build, so
-# that disk image changes after first build are persistent until clean.  More
-# details:
-# http://www.gnu.org/software/make/manual/html_node/Chained-Rules.html
-.PRECIOUS: %.o
-
+# User programs list
 UPROGS=\
-	$U/_cat\
-	$U/_echo\
-	$U/_forktest\
-	$U/_grep\
-	$U/_init\
-	$U/_kill\
-	$U/_ln\
-	$U/_ls\
-	$U/_mkdir\
-	$U/_rm\
-	$U/_sh\
-	$U/_stressfs\
-	$U/_usertests\
-	$U/_grind\
-	$U/_wc\
-	$U/_zombie\
-	$U/_salaam\
-	$U/_retint\
-	$U/_stat\
-	$U/_dir\
-	$U/_test\
-	$U/_testyear\
-	$U/_getppid\
-	$U/_killpid\
-	$U/_msgqueue_test\
-	$U/_user_writershm\
-	$U/_user_readershm\
-	$U/_test1\
-	$U/_test_readcount\
+	$(USER_OBJ_DIR)/cat\
+	$(USER_OBJ_DIR)/echo\
+	$(USER_OBJ_DIR)/forktest\
+	$(USER_OBJ_DIR)/grep\
+	$(USER_OBJ_DIR)/init\
+	$(USER_OBJ_DIR)/kill\
+	$(USER_OBJ_DIR)/ln\
+	$(USER_OBJ_DIR)/ls\
+	$(USER_OBJ_DIR)/mkdir\
+	$(USER_OBJ_DIR)/rm\
+	$(USER_OBJ_DIR)/sh\
+	$(USER_OBJ_DIR)/stressfs\
+	$(USER_OBJ_DIR)/usertests\
+	$(USER_OBJ_DIR)/grind\
+	$(USER_OBJ_DIR)/wc\
+	$(USER_OBJ_DIR)/zombie\
+	$(USER_OBJ_DIR)/salaam\
+	$(USER_OBJ_DIR)/retint\
+	$(USER_OBJ_DIR)/stat\
+	$(USER_OBJ_DIR)/dir\
+	$(USER_OBJ_DIR)/test\
+	$(USER_OBJ_DIR)/testyear\
+	$(USER_OBJ_DIR)/getppid\
+	$(USER_OBJ_DIR)/killpid\
+	$(USER_OBJ_DIR)/msgqueue_test\
+	$(USER_OBJ_DIR)/user_writershm\
+	$(USER_OBJ_DIR)/user_readershm\
+	$(USER_OBJ_DIR)/test1\
+	$(USER_OBJ_DIR)/test_readcount
 
-
+# Filesystem image creation
 fs.img: mkfs/mkfs $(UPROGS)
-	mkfs/mkfs fs.img $(UPROGS)
+	@echo "Creating filesystem image..."
+	mkdir -p .tmp
+	cp $(UPROGS) .tmp/
+	cd .tmp && ../mkfs/mkfs ../fs.img *
+	rm -rf .tmp
 
--include kernel/*.d user/*.d
-
+# Clean rule
 clean: 
+	rm -rf $(BUILD_DIR) .tmp
 	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
-	*/*.o */*.d */*.asm */*.sym \
 	$U/initcode $U/initcode.out $K/kernel fs.img \
 	mkfs/mkfs .gdbinit \
-        $U/usys.S \
-	$(UPROGS)
+	$U/usys.S $(UPROGS)
 
-# try to generate a unique GDB port
+# QEMU settings
+CPUS ?= 3
 GDBPORT = $(shell expr `id -u` % 5000 + 25000)
-# QEMU's gdb stub command line changed in 0.11
 QEMUGDB = $(shell if $(QEMU) -help | grep -q '^-gdb'; \
 	then echo "-gdb tcp::$(GDBPORT)"; \
 	else echo "-s -p $(GDBPORT)"; fi)
-ifndef CPUS
-CPUS := 3
-endif
 
 QEMUOPTS = -machine virt -bios none -kernel $K/kernel -m 128M -smp $(CPUS) -nographic
 QEMUOPTS += -drive file=fs.img,if=none,format=raw,id=x0
 QEMUOPTS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
+# QEMU targets with error checking
 qemu: $K/kernel fs.img
+	@if [ ! -f $K/kernel ]; then \
+		echo "Error: kernel file not found"; \
+		exit 1; \
+	fi
+	@if [ ! -f fs.img ]; then \
+		echo "Error: fs.img not found"; \
+		exit 1; \
+	fi
 	$(QEMU) $(QEMUOPTS)
 
 .gdbinit: .gdbinit.tmpl-riscv
 	sed "s/:1234/:$(GDBPORT)/" < $^ > $@
 
 qemu-gdb: $K/kernel .gdbinit fs.img
+	@if [ ! -f $K/kernel ]; then \
+		echo "Error: kernel file not found"; \
+		exit 1; \
+	fi
+	@if [ ! -f fs.img ]; then \
+		echo "Error: fs.img not found"; \
+		exit 1; \
+	fi
 	@echo "*** Now run 'gdb' in another window." 1>&2
 	$(QEMU) $(QEMUOPTS) -S $(QEMUGDB)
 
+# Include dependencies
+-include $(KERNEL_OBJ_DIR)/*.d $(USER_OBJ_DIR)/*.d

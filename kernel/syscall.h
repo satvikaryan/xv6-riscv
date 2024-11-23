@@ -24,3 +24,7 @@
 #define SYS_getyear 23
 #define SYS_getppid 25
 #define SYS_killpid 26
+#define SYS_shmget 27
+#define SYS_shmat  28
+#define SYS_shmdt  29
+#define SYS_shmctl 30

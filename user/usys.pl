@@ -40,3 +40,7 @@ entry("retint");
 entry("getyear");
 entry("getppid");
 entry("killpid");
+entry("shmget");
+entry("shmat");
+entry("shmdt");
+entry("shmctl");

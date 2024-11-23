@@ -108,6 +108,10 @@ extern uint64 sys_retint(void);
 extern uint64 sys_getyear(void);
 extern uint64 sys_getppid(void);
 extern uint64 sys_killpid(void);
+extern uint64 sys_shmget(void);
+extern uint64 sys_shmat(void);
+extern uint64 sys_shmdt(void);
+extern uint64 sys_shmctl(void);
 
 static uint64 (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -135,6 +139,10 @@ static uint64 (*syscalls[])(void) = {
 [SYS_getyear] sys_getyear,
 [SYS_getppid]  sys_getppid,
 [SYS_killpid]  sys_killpid,
+[SYS_shmget]    sys_shmget,
+[SYS_shmat]     sys_shmat,
+[SYS_shmdt]     sys_shmdt,
+[SYS_shmctl]    sys_shmctl,
 };
 
 void

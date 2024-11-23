@@ -6,6 +6,7 @@
 #include "memlayout.h"
 #include "spinlock.h"
 #include "proc.h"
+#include "shm.h"
 
 uint64
 sys_exit(void)
@@ -119,3 +120,43 @@ sys_getppid(void) {
     return p->parent ? p->parent->pid : 0;  // Return 0 if no parent exists
 }
 
+// System call: shmget
+uint64 
+sys_shmget(void) 
+{
+    int key, size, flags;
+    argint(0, &key);
+    argint(1, &size);
+    argint(2, &flags);
+    return shmget(key, size, flags);
+}
+
+// System call: shmat
+uint64 
+sys_shmat(void) 
+{
+    int shmid;
+    argint(0, &shmid);
+    return shmat(shmid);
+}
+
+// System call: shmdt
+uint64 
+sys_shmdt(void) 
+{
+    int shmid;
+    argint(0, &shmid);
+
+    return shmdt(shmid);
+}
+
+// System call: shmctl
+uint64 
+sys_shmctl(void) 
+{
+    int shmid, cmd;
+    argint(0, &shmid);
+    argint(1, &cmd);
+
+    return shmctl(shmid, cmd);
+}

@@ -28,6 +28,10 @@ int retint(void);
 int getyear(void);
 int getppid(void);
 int killpid(int);
+int shmget(int,int,int);
+void *shmat(int);
+int shmdt(int);
+int shmctl(int,int);
 
 // ulib.c
 int stat(const char*, struct stat*);

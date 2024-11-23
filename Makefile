@@ -142,8 +142,6 @@ UPROGS=\
 	$U/_testyear\
 	$U/_getppid\
 	$U/_killpid\
-	$U/_mywritershm\
-	$U/_myreadershm\
 	$U/_msgqueue_test\
 	$U/_user_writershm\
 	$U/_user_readershm\

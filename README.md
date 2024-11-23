@@ -1,110 +1,76 @@
-# xv6-riscv
-Modified Version of MIT's XV6 Operating System
+# xv6 RISC Operating System Enhancements
 
-## Installation
-### Install Requirements
-```
-sudo apt update
-sudo apt upgrade
-sudo apt install gcc make build-essential gdb-multiarch qemu-system-misc gcc-riscv64-linux-gnu binutils-riscv64-linux-gnu
-```
+This repository contains modifications to the xv6 RISC-V operating system as part of our project. We have added new functionalities through system calls to enhance process management and signaling mechanisms.
 
-### Clone XV6 Repository
-```
-git clone https://github.com/JameelKaisar/xv6-riscv.git
-```
+---
 
-### Change Directory
-```
-cd xv6-riscv
-```
+## Project Overview
 
-### Compile XV6
-```
-make
-```
+This project extends the xv6 operating system by:
+1. Analyzing the existing implementation of system calls.
+2. Adding new system calls for advanced process management.
+3. Demonstrating their usage through a combined user program.
+4. Documenting the design, implementation, and results.
 
-### Run XV6
-```
-make qemu
-```
+---
 
-### Quit XV6
-```
-Crtl+a
-x
-```
+## Added System Calls
 
-### Recompile and Run
-```
-make clean && make && make qemu && make clean && clear
-```
+### 1. **`killpid(pid)`**
+   - **Purpose**: Terminates a process with the specified PID.
+   - **Implementation**: 
+     - Traverses the process table to find the process with the given PID.
+   - **Key Features**:
+     - Prevents termination of non-existent processes by returning an error.
+     - Ensures all resources of the process are freed before termination.
 
-## Commands
-### salaam Command
-```
-$ salaam
-Salaam Robo! Kaifa Haluka?
-```
+### 2. **`getppid()`**
+   - **Purpose**: Retrieves the parent process ID (PPID) of the calling process.
+   - **Implementation**: 
+     - Accesses the process structure of the calling process to return its parent's PID.
+   - **Key Features**:
+     - Helps trace the hierarchy of processes.
+     - Simplifies debugging and inter-process relationship tracking.
 
-```
-$ salaam Ajmi
-Salaam Ajmi! Kaifa Haluka?
-```
+---
 
-### retint Command
-```
-$ retint
-2022
-```
+## Demonstration of Features
 
-### stat Command
-```
-$ stat grep
-ID of Disk Device:  1
-Type:               File
-Inode Number:       5
-Number of Links:    1
-Size:               27320
-```
+### User Program: `killpid.c`
 
-```
-$ stat console
-ID of Disk Device:  1
-Type:               Device
-Inode Number:       22
-Number of Links:    1
-Size:               0
-```
+To validate the implementation of `killpid` and `getppid`, we developed the `killpid.c` program, which demonstrates both functionalities.
 
-### dir Command
-```
-$ dir .
-----------------------------------------------------------
-| .                                                      |
-----------------------------------------------------------
-|     1 | Directory  |       1024 | .                    |
-|     1 | Directory  |       1024 | ..                   |
-|     2 | File       |      23976 | cat                  |
-|     3 | File       |      22800 | echo                 |
-|     4 | File       |      13144 | forktest             |
-|     5 | File       |      27320 | grep                 |
-|     6 | File       |      23888 | init                 |
-|     7 | File       |      22752 | kill                 |
-|     8 | File       |      22704 | ln                   |
-|     9 | File       |      26200 | ls                   |
-|    10 | File       |      22856 | mkdir                |
-|    11 | File       |      22840 | rm                   |
-|    12 | File       |      41728 | sh                   |
-|    13 | File       |      23864 | stressfs             |
-|    14 | File       |     156080 | usertests            |
-|    15 | File       |      38032 | grind                |
-|    16 | File       |      25104 | wc                   |
-|    17 | File       |      22248 | zombie               |
-|    18 | File       |      22600 | salaam               |
-|    19 | File       |      22440 | retint               |
-|    20 | File       |      23800 | stat                 |
-|    21 | File       |      30232 | dir                  |
-|    22 | Device     |          0 | console              |
-----------------------------------------------------------
-```
+
+## How to Build and Run
+
+### 1. **Build xv6**
+   Clone the repository and navigate to the xv6 directory:
+   ```bash
+   git clone <repo-url>
+   cd xv6
+   make qemu
+   ```
+
+### 2. **Run the User Program**
+   - Execute the `killpid` program:
+     ```bash
+     killpid
+     ```
+
+---
+
+## Screenshots
+
+### Output of `killpid.c`
+
+#### 1. Parent Process:
+   - Displays its PPID and the PID of the child.
+   - Terminates the child process after a brief delay.
+   
+#### 2. Child Process:
+   - Prints its PID and is terminated.
+
+![Killpid Output](images/killpid_output.png)
+
+---
+

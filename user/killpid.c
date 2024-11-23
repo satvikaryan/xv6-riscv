@@ -26,7 +26,7 @@ int main()
     else
     {
         // Parent process
-        sleep(2); // Sleep for a moment to let the child run
+        sleep(20); // Sleep for a moment to let the child run
 
         printf("Parent process: PID = %d, PPID = %d, killing child PID = %d\n", getpid(), getppid(), pid);
 

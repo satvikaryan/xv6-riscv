@@ -1,17 +1,30 @@
-*~
-_*
+# Build directory
+build/
+.tmp/
+
+# Generated files
+kernel/kernel
+user/initcode
+user/initcode.out
+user/usys.S
+fs.img
+mkfs/mkfs
+.gdbinit
+
+# Object files and dependencies
 *.o
 *.d
-*.asm
-*.sym
-*.img
-vectors.S
-bootblock
-entryother
-initcode
-initcode.out
-kernelmemfs
-mkfs/mkfs
-kernel/kernel
-user/usys.S
-.gdbinit
+
+# Backup files
+*~
+*.swp
+*.swo
+
+# Other generated files
+*.tex
+*.dvi
+*.idx
+*.aux
+*.log
+*.ind
+*.ilg

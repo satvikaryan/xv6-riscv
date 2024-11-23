@@ -32,6 +32,7 @@ int shmget(int,int,int);
 void *shmat(int);
 int shmdt(int);
 int shmctl(int,int);
+int getreadcount(void);
 
 // ulib.c
 int stat(const char*, struct stat*);

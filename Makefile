@@ -141,8 +141,10 @@ UPROGS=\
 	$U/_testyear\
 	$U/_getppid\
 	$U/_killpid\
-	$U/_mywritershm\
-	$U/_myreadershm\
+	$U/_user_writershm\
+	$U/_user_readershm\
+	$U/_test1\
+	$U/_test_readcount\
 
 
 fs.img: mkfs/mkfs $(UPROGS)

@@ -28,3 +28,4 @@
 #define SYS_shmat  28
 #define SYS_shmdt  29
 #define SYS_shmctl 30
+#define SYS_getreadcount 31

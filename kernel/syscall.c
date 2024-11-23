@@ -6,7 +6,7 @@
 #include "proc.h"
 #include "syscall.h"
 #include "defs.h"
-
+int readcount=0;
 // Fetch the uint64 at addr from the current process.
 int
 fetchaddr(uint64 addr, uint64 *ip)
@@ -112,6 +112,7 @@ extern uint64 sys_shmget(void);
 extern uint64 sys_shmat(void);
 extern uint64 sys_shmdt(void);
 extern uint64 sys_shmctl(void);
+extern uint64 sys_getreadcount(void);
 
 static uint64 (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -143,6 +144,7 @@ static uint64 (*syscalls[])(void) = {
 [SYS_shmat]     sys_shmat,
 [SYS_shmdt]     sys_shmdt,
 [SYS_shmctl]    sys_shmctl,
+[SYS_getreadcount]   sys_getreadcount,
 };
 
 void
@@ -152,6 +154,12 @@ syscall(void)
   struct proc *p = myproc();
 
   num = p->trapframe->a7;
+  if (num==SYS_read){
+    readcount++; //my change
+  }
+  if (num==SYS_getreadcount){
+    p->readid = readcount; //my change
+  }
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
     p->trapframe->a0 = syscalls[num]();
   } else {

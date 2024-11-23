@@ -160,3 +160,8 @@ sys_shmctl(void)
 
     return shmctl(shmid, cmd);
 }
+int
+sys_getreadcount(void)
+{
+  return myproc()->readid;
+}

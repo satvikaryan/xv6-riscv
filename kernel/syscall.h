@@ -32,3 +32,4 @@
 #define SYS_msgsend 22
 #define SYS_msgrcv  33
 #define SYS_msgclose 34
+#define SYS_getreadcount 35

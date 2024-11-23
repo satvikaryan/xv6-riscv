@@ -145,6 +145,10 @@ UPROGS=\
 	$U/_mywritershm\
 	$U/_myreadershm\
 	$U/_msgqueue_test\
+	$U/_user_writershm\
+	$U/_user_readershm\
+	$U/_test1\
+	$U/_test_readcount\
 
 
 fs.img: mkfs/mkfs $(UPROGS)

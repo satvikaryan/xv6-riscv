@@ -48,3 +48,4 @@ entry("msgget");
 entry("msgsend");
 entry("msgrcv");
 entry("msgclose");
+entry("getreadcount");

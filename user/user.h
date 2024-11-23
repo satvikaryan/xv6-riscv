@@ -36,6 +36,7 @@ uint64 msgget(void);
 uint64 msgsend(int qid, char*, int);
 uint64 msgrcv(int qid, char*, int);
 uint64 msgclose(int qid);
+int getreadcount(void);
 
 // ulib.c
 int stat(const char*, struct stat*);

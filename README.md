@@ -18,21 +18,31 @@ This project extends the xv6 operating system by:
 
 ### 1. **`killpid(pid)`**
    - **Purpose**: Terminates a process with the specified PID.
-   - **Implementation**: 
-     - Traverses the process table to find the process with the given PID.
-   - **Key Features**:
-     - Prevents termination of non-existent processes by returning an error.
-     - Ensures all resources of the process are freed before termination.
 
 ### 2. **`getppid()`**
    - **Purpose**: Retrieves the parent process ID (PPID) of the calling process.
-   - **Implementation**: 
-     - Accesses the process structure of the calling process to return its parent's PID.
-   - **Key Features**:
-     - Helps trace the hierarchy of processes.
-     - Simplifies debugging and inter-process relationship tracking.
 
----
+### 3. **`msgqueue`**
+   - **Purpose**: Manages inter-process communication using message queues.
+
+### 4. **`writershm`**
+   - **Purpose**: Writes data into shared memory.
+
+### 5. **`readershm`**
+   - **Purpose**: Reads data from shared memory.
+
+### 6. **`readcount1`**
+   - **Purpose**: Tracks and retrieves the read count for a specific shared resource.
+
+### 7. **`readcount2`**
+   - **Purpose**: Similar to `readcount1` .
+
+### 8. **`sem_test`**
+   - **Purpose**: Tests semaphore-based synchronization between processes.
+
+### 9. **`producer_consumer`**
+   - **Purpose**: Implements the producer-consumer problem using messag and sye queue and synchronization mechanisms.
+
 
 ## Demonstration of Features
 
@@ -47,28 +57,68 @@ To validate the implementation of `killpid` and `getppid`, we developed the `kil
    Clone the repository and navigate to the xv6 directory:
    ```bash
    git clone <repo-url>
-   cd xv6
+   cd xv6-riscv
+   make clean
    make qemu
    ```
 
-### 2. **Run the User Program**
+# User Programs Execution Guide
+
    - Execute the `killpid` program:
      ```bash
-     killpid
+     user_killpid
      ```
+
+   - **Get Parent Process ID**:
+     ```bash
+     user_getppid
+     ```
+
+   - **Message Queue Program**:
+     ```bash
+     user_msgqueue
+     ```
+
+   - **Writer Shared Memory Program**:
+     ```bash
+     user_writershm
+     ```
+
+   - **Reader Shared Memory Program**:
+     ```bash
+     user_readershm
+     ```
+
+   - **Read Count Program 1**:
+     ```bash
+     user_readcount1
+     ```
+
+   - **Read Count Program 2**:
+     ```bash
+     user_readcount2
+     ```
+
+   - **Semaphore Test Program**:
+     ```bash
+     user_sem_test
+     ```
+
+   - **Producer-Consumer Program**:
+     ```bash
+     user_producer_consumer
+     ```
+
+
+## Notes:
+- Ensure that the environment variable `USER_OBJ_DIR` is set to the correct directory where the user programs are located.
+- Each program can be executed individually using the respective command listed above.
+
+
 
 ---
 
 ## Screenshots
-
-### Output of `killpid.c`
-
-#### 1. Parent Process:
-   - Displays its PPID and the PID of the child.
-   - Terminates the child process after a brief delay.
-   
-#### 2. Child Process:
-   - Prints its PID and is terminated.
 
 ![Killpid Output](images/killpid_output.png)
 

@@ -1,5 +1,7 @@
 _*
 
+# ignore vscode settings
+.vscode/
 
 # Build directory
 build/

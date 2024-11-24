@@ -49,3 +49,7 @@ entry("msgsend");
 entry("msgrcv");
 entry("msgclose");
 entry("getreadcount");
+entry("sem_create");
+entry("sem_signal");
+entry("sem_wait");
+entry("sem_delete");

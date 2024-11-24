@@ -43,6 +43,7 @@ KOBJS = $(addprefix $(KERNEL_OBJ_DIR)/, \
   virtio_disk.o \
   shm.o \
   msgqueue.o \
+  semaphore.o \
 )
 
 # Host compiler settings
@@ -161,7 +162,8 @@ UPROGS=\
 	$(USER_OBJ_DIR)/user_writershm\
 	$(USER_OBJ_DIR)/user_readershm\
 	$(USER_OBJ_DIR)/test1\
-	$(USER_OBJ_DIR)/test_readcount
+	$(USER_OBJ_DIR)/test_readcount\
+	$(USER_OBJ_DIR)/sem_test\
 
 # Filesystem image creation
 fs.img: mkfs/mkfs $(UPROGS)

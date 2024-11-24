@@ -43,6 +43,7 @@ main()
     trapinithart();   // install kernel trap vector
     plicinithart();   // ask PLIC for device interrupts
   }
+  seminit();
   msgqueue_init();
   scheduler();        
 }

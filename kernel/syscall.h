@@ -33,3 +33,7 @@
 #define SYS_msgrcv  33
 #define SYS_msgclose 34
 #define SYS_getreadcount 35
+#define SYS_sem_create  36
+#define SYS_sem_wait    37
+#define SYS_sem_signal  38
+#define SYS_sem_delete  39

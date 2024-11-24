@@ -198,3 +198,9 @@ uint64 sys_msgsend(void);
 uint64 sys_msgrcv(void);
 uint64 sys_msgclose(void);
 // void            msgqueue_init(void);
+
+void            seminit(void);
+uint64             sys_sem_create(void);
+uint64             sys_sem_wait(void);
+uint64             sys_sem_signal(void);
+uint64             sys_sem_delete(void);

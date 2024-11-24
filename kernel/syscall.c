@@ -117,6 +117,12 @@ extern uint64 sys_msgsend(void);
 extern uint64 sys_msgrcv(void);
 extern uint64 sys_msgclose(void);
 extern uint64 sys_getreadcount(void);
+extern uint64 sys_sem_create(void);
+extern uint64 sys_sem_wait(void);
+extern uint64 sys_sem_signal(void);
+extern uint64 sys_sem_delete(void);
+
+
 
 static uint64 (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -153,6 +159,10 @@ static uint64 (*syscalls[])(void) = {
 [SYS_msgrcv]    sys_msgrcv,
 [SYS_msgclose]  sys_msgclose,
 [SYS_getreadcount]   sys_getreadcount,
+[SYS_sem_create]   sys_sem_create,
+[SYS_sem_wait]     sys_sem_wait,
+[SYS_sem_signal]   sys_sem_signal,
+[SYS_sem_delete]   sys_sem_delete,
 };
 
 void

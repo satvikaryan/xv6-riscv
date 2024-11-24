@@ -37,6 +37,10 @@ uint64 msgsend(int qid, char*, int);
 uint64 msgrcv(int qid, char*, int);
 uint64 msgclose(int qid);
 int getreadcount(void);
+int sem_create(char*, int);
+void sem_wait(int);
+void sem_signal(int);
+int sem_delete(int);
 
 // ulib.c
 int stat(const char*, struct stat*);

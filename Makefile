@@ -170,10 +170,32 @@ UPROGS=\
 # Filesystem image creation
 fs.img: mkfs/mkfs $(UPROGS)
 	@echo "Creating filesystem image..."
-	mkdir -p .tmp
-	cp $(UPROGS) .tmp/
-	cd .tmp && ../mkfs/mkfs ../fs.img *
-	rm -rf .tmp
+	@rm -rf .tmp
+	@mkdir -p .tmp
+	@for f in $(UPROGS); do \
+		if [ -f "$$f" ]; then \
+			cp "$$f" .tmp/`basename $$f` || exit 1; \
+		else \
+			echo "Error: $$f not found"; \
+			rm -rf .tmp; \
+			exit 1; \
+		fi; \
+	done
+	@echo "Running mkfs..."
+	cd .tmp && ../mkfs/mkfs ../fs.img * || true
+	@if [ ! -f fs.img ]; then \
+		echo "Error: fs.img was not created"; \
+		rm -rf .tmp; \
+		exit 1; \
+	fi
+	@echo "Checking fs.img size..."
+	@if [ ! -s fs.img ]; then \
+		echo "Error: fs.img is empty"; \
+		rm -rf .tmp; \
+		exit 1; \
+	fi
+	@rm -rf .tmp
+	@echo "Filesystem image created successfully"
 
 # Clean rule
 clean: 

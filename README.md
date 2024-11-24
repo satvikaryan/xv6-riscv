@@ -24,6 +24,11 @@ This project extends the xv6 operating system by:
 
 ### 3. **`msgqueue`**
    - **Purpose**: Manages inter-process communication using message queues.
+   - **Subpoints**:
+     - **`msgget`**: Creates or accesses a message queue.
+     - **`msgsend`**: Sends a message to a message queue.
+     - **`msgrcv`**: Receives a message from a message queue.
+     - **`msgclose`**: Deletes or closes the message queue.
 
 ### 4. **`writershm`**
    - **Purpose**: Writes data into shared memory.
@@ -31,17 +36,28 @@ This project extends the xv6 operating system by:
 ### 5. **`readershm`**
    - **Purpose**: Reads data from shared memory.
 
+###  **Shared Memory Operations**
+   - **Subpoints**:
+     - **`shmget`**: Allocates or retrieves a shared memory segment.
+     - **`shmat`**: Attaches a shared memory segment to a process.
+     - **`shmdt`**: Detaches a shared memory segment from a process.
+     - **`shmctl`**: Performs control operations on shared memory.
+
 ### 6. **`readcount1`**
    - **Purpose**: Tracks and retrieves the read count for a specific shared resource.
 
 ### 7. **`readcount2`**
-   - **Purpose**: Similar to `readcount1` .
+   - **Purpose**: Similar to `readcount1`.
 
 ### 8. **`sem_test`**
    - **Purpose**: Tests semaphore-based synchronization between processes.
+   - **Subpoints**:
+     - **`sem_signal`**: Increments the semaphore value (signal operation).
+     - **`sem_wait`**: Decrements the semaphore value and waits if zero.
+     - **`sem_delete`**: Removes a semaphore from the system.
 
 ### 9. **`producer_consumer`**
-   - **Purpose**: Implements the producer-consumer problem using messag and sye queue and synchronization mechanisms.
+   - **Purpose**: Implements the producer-consumer problem using message queues and synchronization mechanisms.
 
 
 ## Demonstration of Features

@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "stdio.h": "c",
-        "spinlock.h": "c",
-        "proc.h": "c",
-        "shm.h": "c",
-        "defs.h": "c"
-    }
-}

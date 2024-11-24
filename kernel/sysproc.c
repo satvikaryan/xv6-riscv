@@ -7,6 +7,7 @@
 #include "spinlock.h"
 #include "proc.h"
 #include "shm.h"
+#include "semaphore.h"
 
 uint64
 sys_exit(void)
@@ -166,49 +167,48 @@ sys_getreadcount(void)
   return myproc()->readid;
 }
 
-// uint64
-// sys_sem_create(void)
-// {
-//   char name[16];  // Fixed-size buffer for the name
-//   int value;
-  
-//   // Using name directly (not &name) since it's already a char*
-//   // Also adding the buffer size as the third argument
-//   if(argstr(0, name, sizeof(name)) < 0 || argint(1, &value) < 0)
-//     return -1;
-    
-//   return sem_create(name, value);
-// }
+// System call implementations
+uint64
+sys_sem_create(void)
+{
+  char name[64];
+  int value;
 
-// uint64
-// sys_sem_wait(void)
-// {
-//   int sem_id;
-  
-//   if(argint(0, &sem_id) < 0)
-//     return -1;
-    
-//   return sem_wait(sem_id);
-// }
+  if(argstr(0, name, sizeof(name)) < 0)
+    return -1;
+  argint(1, &value);
 
-// uint64
-// sys_sem_signal(void)
-// {
-//   int sem_id;
-  
-//   if(argint(0, &sem_id) < 0)
-//     return -1;
-    
-//   return sem_signal(sem_id);
-// }
+  return sem_create(name, value);
+}
 
-// uint64
-// sys_sem_delete(void)
-// {
-//   int sem_id;
-  
-//   if(argint(0, &sem_id) < 0)
-//     return -1;
-    
-//   return sem_delete(sem_id);
-// }
+uint64
+sys_sem_wait(void)
+{
+  int sem_id;
+
+  argint(0, &sem_id);
+
+  sem_wait(sem_id);
+  return 0;
+}
+
+uint64
+sys_sem_signal(void)
+{
+  int sem_id;
+
+  argint(0, &sem_id);
+
+  sem_signal(sem_id);
+  return 0;
+}
+
+uint64
+sys_sem_delete(void)
+{
+  int sem_id;
+
+  argint(0, &sem_id);
+
+  return sem_delete(sem_id);
+}

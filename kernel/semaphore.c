@@ -22,7 +22,7 @@ seminit(void)
   }
 }
 
-uint64
+int
 sem_create(char *name, int value)
 {
   struct semaphore *s;
@@ -109,7 +109,7 @@ sem_signal(int sem_id)
   release(&s->lock);
 }
 
-uint64
+int
 sem_delete(int sem_id)
 {
   struct semaphore *s;
@@ -134,48 +134,3 @@ sem_delete(int sem_id)
   return 0;
 }
 
-// System call implementations
-uint64
-sys_sem_create(void)
-{
-  char name[64];
-  int value;
-
-  if(argstr(0, name, sizeof(name)) < 0)
-    return -1;
-  argint(1, &value);
-
-  return sem_create(name, value);
-}
-
-uint64
-sys_sem_wait(void)
-{
-  int sem_id;
-
-  argint(0, &sem_id);
-
-  sem_wait(sem_id);
-  return 0;
-}
-
-uint64
-sys_sem_signal(void)
-{
-  int sem_id;
-
-  argint(0, &sem_id);
-
-  sem_signal(sem_id);
-  return 0;
-}
-
-uint64
-sys_sem_delete(void)
-{
-  int sem_id;
-
-  argint(0, &sem_id);
-
-  return sem_delete(sem_id);
-}

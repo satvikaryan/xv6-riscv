@@ -1,10 +1,10 @@
-// user/msgtest.c
+
 #include "kernel/types.h"
 #include "kernel/stat.h"
 #include "user/user.h"
 
 #define MAX_MSG_SIZE 256
-#define MAX_QUEUES 16   // Add this definition to match kernel's definition
+#define MAX_QUEUES 16  
 
 void test_basic_messaging() {
   printf("Test 1: Basic messaging between parent and child\n");

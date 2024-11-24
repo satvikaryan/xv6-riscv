@@ -164,6 +164,7 @@ UPROGS=\
 	$(USER_OBJ_DIR)/test1\
 	$(USER_OBJ_DIR)/test_readcount\
 	$(USER_OBJ_DIR)/sem_test\
+	
 
 # Filesystem image creation
 fs.img: mkfs/mkfs $(UPROGS)

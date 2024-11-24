@@ -1,3 +1,7 @@
+#ifndef _PROC_H_
+#define _PROC_H_
+
+
 #include"spinlock.h"
 
 // Saved registers for kernel context switches.
@@ -109,4 +113,19 @@ struct proc {
   char name[16];               // Process name (debugging)
   int readid;
   uint64 shm_va;              //Currently assuming a process can only attach one shm at a time.
+  
 };
+
+struct proc_info {
+  int pid;
+  char state[16];
+  char name[16];
+  uint size;
+};
+
+extern struct proc proc[NPROC];
+extern struct spinlock proc_table_lock;  
+
+// enum procstate { UNUSED, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
+
+#endif

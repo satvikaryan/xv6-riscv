@@ -37,3 +37,6 @@
 #define SYS_sem_wait    37
 #define SYS_sem_signal  38
 #define SYS_sem_delete  39
+#define SYS_thread_create 40
+#define SYS_thread_exit   41
+#define SYS_thread_join   42

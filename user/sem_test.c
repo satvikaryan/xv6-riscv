@@ -2,112 +2,268 @@
 #include "kernel/stat.h"
 #include "user/user.h"
 
-#define BUFFER_SIZE 5
-#define NUM_ITEMS 10
-
-// Shared buffer
-int buffer[BUFFER_SIZE];
-int in = 0;   // index for inserting
-int out = 0;  // index for removing
-
-// Test function to demonstrate producer behavior
-void
-producer(int sem_empty, int sem_full, int sem_mutex)
+// Function for child process (prints B and D)
+void 
+child_process(int sem_ab, int sem_bc, int sem_cd)
 {
-  int item;
-  
-  for(item = 0; item < NUM_ITEMS; item++) {
-    sem_wait(sem_empty);    // Wait for empty slot
-    sem_wait(sem_mutex);    // Enter critical section
+    // Wait for A to complete before printing B
+    sem_wait(sem_ab);
+    printf("Child: B\n");
+    // Signal that B is complete
+    sem_signal(sem_bc);
     
-    // Produce item
-    buffer[in] = item;
-    printf("Producer: Inserted item %d at position %d\n", item, in);
-    in = (in + 1) % BUFFER_SIZE;
+    // Wait for C to complete before printing D
+    sem_wait(sem_cd);
+    printf("Child: D\n");
     
-    sem_signal(sem_mutex);  // Exit critical section
-    sem_signal(sem_full);   // Signal that new item is in buffer
-    
-    sleep(10);  // Simulate some work
-  }
-  
-  exit(0);
+    exit(0);
 }
 
-// Test function to demonstrate consumer behavior
-void
-consumer(int sem_empty, int sem_full, int sem_mutex)
+// Function for parent process (prints A and C)
+void 
+parent_process(int sem_ab, int sem_bc, int sem_cd)
 {
-  int item;
-  int i;
-  
-  for(i = 0; i < NUM_ITEMS; i++) {
-    sem_wait(sem_full);     // Wait for item to be available
-    sem_wait(sem_mutex);    // Enter critical section
+    printf("Parent: A\n");
+    // Signal that A is complete
+    sem_signal(sem_ab);
     
-    // Consume item
-    item = buffer[out];
-    printf("Consumer: Removed item %d from position %d\n", item, out);
-    out = (out + 1) % BUFFER_SIZE;
-    
-    sem_signal(sem_mutex);  // Exit critical section
-    sem_signal(sem_empty);  // Signal that a slot is free
-    
-    sleep(20);  // Simulate some work
-  }
-  
-  exit(0);
+    // Wait for B to complete before printing C
+    sem_wait(sem_bc);
+    printf("Parent: C\n");
+    // Signal that C is complete
+    sem_signal(sem_cd);
 }
 
 int
 main(void)
 {
-  int pid;
-  int sem_mutex, sem_empty, sem_full;
-  
-  // Create semaphores
-  sem_mutex = sem_create("mutex", 1);      // Binary semaphore for mutual exclusion
-  sem_empty = sem_create("empty", BUFFER_SIZE); // Counting semaphore for empty slots
-  sem_full = sem_create("full", 0);        // Counting semaphore for full slots
-  
-  if(sem_mutex < 0 || sem_empty < 0 || sem_full < 0) {
-    printf("Failed to create semaphores\n");
+    int pid;
+    int sem_ab, sem_bc, sem_cd;
+    
+    // Create semaphores
+    sem_ab = sem_create("ab", 0);  // Controls B (after A)
+    sem_bc = sem_create("bc", 0);  // Controls C (after B)
+    sem_cd = sem_create("cd", 0);  // Controls D (after C)
+    
+    if(sem_ab < 0 || sem_bc < 0 || sem_cd < 0) {
+        printf("Failed to create semaphores\n");
+        exit(0);
+    }
+    
+    // Create child process
+    pid = fork();
+    if(pid < 0) {
+        printf("Fork failed\n");
+        exit(0);
+    }
+    
+    if(pid == 0) {  // Child process
+        child_process(sem_ab, sem_bc, sem_cd);
+    } else {  // Parent process
+        parent_process(sem_ab, sem_bc, sem_cd);
+        
+        // Wait for child to complete
+        wait(0);
+        
+        // Clean up semaphores
+        sem_delete(sem_ab);
+        sem_delete(sem_bc);
+        sem_delete(sem_cd);
+    }
+    
     exit(0);
-  }
-  
-  printf("Starting producer-consumer test...\n");
-  
-  // Create producer process
-  pid = fork();
-  if(pid < 0) {
-    printf("Fork failed\n");
-    exit(0);
-  }
-  
-  if(pid == 0) {  // Child process (Producer)
-    producer(sem_empty, sem_full, sem_mutex);
-  }
-  
-  // Create consumer process
-  pid = fork();
-  if(pid < 0) {
-    printf("Fork failed\n");
-    exit(0);
-  }
-  
-  if(pid == 0) {  // Child process (Consumer)
-    consumer(sem_empty, sem_full, sem_mutex);
-  }
-  
-  // Parent process waits for both children
-  wait(0);
-  wait(0);
-  
-  // Clean up semaphores
-  sem_delete(sem_mutex);
-  sem_delete(sem_empty);
-  sem_delete(sem_full);
-  
-  printf("Producer-consumer test completed\n");
-  exit(0);
 }
+
+
+#include "kernel/types.h"
+#include "kernel/stat.h"
+#include "user/user.h"
+
+#define MAX_MSG_SIZE 256
+#define NUM_ITEMS 5
+// // Function for child process (prints B and D)
+// void 
+// child_process(int sem_ab, int sem_bc, int sem_cd)
+// {
+//     // Wait for A to complete before printing B
+//     sem_wait(sem_ab);
+//     printf("Child: B\n");
+//     // Signal that B is complete
+//     sem_signal(sem_bc);
+    
+//     // Wait for C to complete before printing D
+//     sem_wait(sem_cd);
+//     printf("Child: D\n");
+    
+//     exit(0);
+// }
+
+// // Function for parent process (prints A and C)
+// void 
+// parent_process(int sem_ab, int sem_bc, int sem_cd)
+// {
+//     printf("Parent: A\n");
+//     // Signal that A is complete
+//     sem_signal(sem_ab);
+    
+//     // Wait for B to complete before printing C
+//     sem_wait(sem_bc);
+//     printf("Parent: C\n");
+//     // Signal that C is complete
+//     sem_signal(sem_cd);
+// }
+
+// int
+// main(void)
+// {
+//     int pid;
+//     int sem_ab, sem_bc, sem_cd;
+    
+//     // Create semaphores
+//     sem_ab = sem_create("ab", 0);  // Controls B (after A)
+//     sem_bc = sem_create("bc", 0);  // Controls C (after B)
+//     sem_cd = sem_create("cd", 0);  // Controls D (after C)
+    
+//     if(sem_ab < 0 || sem_bc < 0 || sem_cd < 0) {
+//         printf("Failed to create semaphores\n");
+//         exit(0);
+//     }
+    
+//     // Create child process
+//     pid = fork();
+//     if(pid < 0) {
+//         printf("Fork failed\n");
+//         exit(0);
+//     }
+    
+//     if(pid == 0) {  // Child process
+//         child_process(sem_ab, sem_bc, sem_cd);
+//     } else {  // Parent process
+//         parent_process(sem_ab, sem_bc, sem_cd);
+        
+//         // Wait for child to complete
+//         wait(0);
+        
+//         // Clean up semaphores
+//         sem_delete(sem_ab);
+//         sem_delete(sem_bc);
+//         sem_delete(sem_cd);
+//     }
+    
+//     exit(0);
+// }
+
+// void producer(int qid, int sem_print) {
+//     char msg[MAX_MSG_SIZE];
+    
+//     for(int i = 0; i < NUM_ITEMS; i++) {
+//         // Create the message with item number
+//         msg[0] = '0' + i;  // Convert number to character
+//         msg[1] = '\0';     // Null terminate
+        
+//         // Wait for printing permission
+//         sem_wait(sem_print);
+        
+//         // Send the message
+//         if(msgsend(qid, msg, strlen(msg)) < 0) {
+//             printf("Producer: Failed to send item %d\n", i);
+//             exit(1);
+//         }
+        
+//         printf("Producer: Sent item %d\n", i);
+//         sleep(10);  // Simulate some work
+        
+//         // Allow consumer to print
+//         sem_signal(sem_print);
+        
+//         // Add small delay to ensure consumer gets chance to acquire semaphore
+//         sleep(5);
+//     }
+    
+//     exit(0);
+// }
+
+// void consumer(int qid, int sem_print) {
+//     char msg[MAX_MSG_SIZE];
+    
+//     for(int i = 0; i < NUM_ITEMS; i++) {
+//         // Wait for producer to finish printing
+//         sem_wait(sem_print);
+        
+//         // Receive message
+//         int n = msgrcv(qid, msg, sizeof(msg));
+//         if(n < 0) {
+//             printf("Consumer: Failed to receive item %d\n", i);
+//             exit(1);
+//         }
+        
+//         // Null terminate the message
+//         msg[n] = 0;
+//         // Convert character back to number
+//         int item = msg[0] - '0';
+//         printf("Consumer: Received item %d\n", item);
+//         sleep(20);  // Simulate some work
+        
+//         // Allow producer to print
+//         sem_signal(sem_print);
+        
+//         // Add small delay to ensure producer gets chance to acquire semaphore
+//         sleep(5);
+//     }
+    
+//     exit(0);
+// }
+
+// int main(void) {
+//     int qid, pid;
+//     int sem_print;
+    
+//     // Create message queue
+//     qid = msgget();
+//     if(qid < 0) {
+//         printf("Failed to create message queue\n");
+//         exit(1);
+//     }
+    
+//     // Create semaphore for print synchronization
+//     sem_print = sem_create("print", 1);
+//     if(sem_print < 0) {
+//         printf("Failed to create semaphore\n");
+//         exit(1);
+//     }
+    
+//     printf("Starting producer-consumer test with message queues...\n");
+    
+//     // Create producer process
+//     pid = fork();
+//     if(pid < 0) {
+//         printf("Fork failed for producer\n");
+//         exit(1);
+//     }
+    
+//     if(pid == 0) {  // Child process (Producer)
+//         producer(qid, sem_print);
+//     }
+    
+//     // Create consumer process
+//     pid = fork();
+//     if(pid < 0) {
+//         printf("Fork failed for consumer\n");
+//         exit(1);
+//     }
+    
+//     if(pid == 0) {  // Child process (Consumer)
+//         consumer(qid, sem_print);
+//     }
+    
+//     // Parent process waits for both children
+//     wait(0);  // Wait for producer
+//     wait(0);  // Wait for consumer
+    
+//     // Clean up
+//     msgclose(qid);
+//     sem_delete(sem_print);
+    
+//     printf("Producer-consumer test completed!\n");
+//     exit(0);
+// }

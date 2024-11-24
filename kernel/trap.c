@@ -46,7 +46,7 @@ usertrap(void)
   w_stvec((uint64)kernelvec);
 
   struct proc *p = myproc();
-  
+  // struct thread *t 
   // save user program counter.
   p->trapframe->epc = r_sepc();
   

@@ -156,14 +156,15 @@ UPROGS=\
 	$(USER_OBJ_DIR)/dir\
 	$(USER_OBJ_DIR)/test\
 	$(USER_OBJ_DIR)/testyear\
-	$(USER_OBJ_DIR)/getppid\
-	$(USER_OBJ_DIR)/killpid\
-	$(USER_OBJ_DIR)/msgqueue_test\
+	$(USER_OBJ_DIR)/user_getppid\
+	$(USER_OBJ_DIR)/user_killpid\
+	$(USER_OBJ_DIR)/user_msgqueue\
 	$(USER_OBJ_DIR)/user_writershm\
 	$(USER_OBJ_DIR)/user_readershm\
-	$(USER_OBJ_DIR)/test1\
-	$(USER_OBJ_DIR)/test_readcount\
-	$(USER_OBJ_DIR)/sem_test\
+	$(USER_OBJ_DIR)/user_readcount1\
+	$(USER_OBJ_DIR)/user_readcount2\
+	$(USER_OBJ_DIR)/user_sem_test\
+	$(USER_OBJ_DIR)/user_producer_consumer\
 	
 
 # Filesystem image creation

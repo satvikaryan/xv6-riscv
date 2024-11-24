@@ -1,5 +1,9 @@
 _*
 
+# ignore old makefile
+# Makefile.old
+Makefile.new
+
 # ignore vscode settings
 .vscode/
 

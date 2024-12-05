@@ -1,142 +1,116 @@
-# xv6 RISC Operating System Enhancements
+# xv6 RISC-V Operating System Enhancements
 
-This repository contains modifications to the xv6 RISC-V operating system as part of our project. We have added new functionalities through system calls to enhance process management and signaling mechanisms.
+## Overview
+
+This project extends the xv6 RISC-V operating system by adding new system calls to improve functionality. The system calls implemented include process management (`killpid`, `getppid`), message queue management, shared memory, and synchronization mechanisms (semaphores).
+
+## Table of Contents
+
+1. [Introduction](#introduction)
+2. [System Calls Added](#system-calls-added)
+   - [killpid(pid)](#killpidpid)
+   - [getppid()](#getppid)
+   - [Message Queue System Calls](#message-queue-system-calls)
+   - [Shared Memory System Calls](#shared-memory-system-calls)
+   - [Synchronization System Calls](#synchronization-system-calls)
+3. [User Programs](#user-programs)
+4. [How to Build and Run](#how-to-build-and-run)
+5. [Results](#results)
 
 ---
 
-## Project Overview
+## Introduction
 
-This project extends the xv6 operating system by:
-1. Analyzing the existing implementation of system calls.
-2. Adding new system calls for advanced process management.
-3. Demonstrating their usage through a combined user program.
-4. Documenting the design, implementation, and results.
+The xv6 operating system is a teaching platform for understanding the basics of operating system design. This project enhances the system by introducing advanced process management, inter-process communication (IPC), and synchronization features such as message queues, shared memory, and semaphores.
 
----
+## System Calls Added
 
-## Added System Calls
+### `killpid(pid)`
+Terminates a process identified by its Process ID (PID).
 
-### 1. **`killpid(pid)`**
-   - **Purpose**: Terminates a process with the specified PID.
+### `getppid()`
+Retrieves the parent process ID (PPID) of the calling process.
 
-### 2. **`getppid()`**
-   - **Purpose**: Retrieves the parent process ID (PPID) of the calling process.
+### Message Queue System Calls
 
-### 3. **`msgqueue`**
-   - **Purpose**: Manages inter-process communication using message queues.
-   - **Subpoints**:
-     - **`msgget`**: Creates or accesses a message queue.
-     - **`msgsend`**: Sends a message to a message queue.
-     - **`msgrcv`**: Receives a message from a message queue.
-     - **`msgclose`**: Deletes or closes the message queue.
+A message queue system is implemented to facilitate communication between processes. The following are the key components:
 
-### 4. **`writershm`**
-   - **Purpose**: Writes data into shared memory.
+- `msgqueue`: Represents the queue structure.
+  - Fields: `head`, `tail`, `max_msgs`, `curr_msgs`, `max_size`, `refs`, `lock`.
+- `msg`: Represents a single message in the queue.
+  - Fields: `content`, `size`, `next`.
 
-### 5. **`readershm`**
-   - **Purpose**: Reads data from shared memory.
+#### Functions:
 
-###  **Shared Memory Operations**
-   - **Subpoints**:
-     - **`shmget`**: Allocates or retrieves a shared memory segment.
-     - **`shmat`**: Attaches a shared memory segment to a process.
-     - **`shmdt`**: Detaches a shared memory segment from a process.
-     - **`shmctl`**: Performs control operations on shared memory.
+- `msgqueue_init`: Initializes the message queue system.
+- `sys_msgget`: Creates or retrieves a message queue.
+- `sys_msgsend`: Sends a message to the queue.
+- `sys_msgrcv`: Receives a message from the queue.
+- `sys_msgclose`: Closes a message queue.
 
-### 6. **`readcount1`**
-   - **Purpose**: Tracks and retrieves the read count for a specific shared resource.
+### Shared Memory System Calls
 
-### 7. **`readcount2`**
-   - **Purpose**: Similar to `readcount1`.
+This set of system calls implements the management of shared memory regions between processes. The shared memory segments are identified by unique IDs and keys, and their properties (size, reference count, etc.) are managed.
 
-### 8. **`sem_test`**
-   - **Purpose**: Tests semaphore-based synchronization between processes.
-   - **Subpoints**:
-     - **`sem_signal`**: Increments the semaphore value (signal operation).
-     - **`sem_wait`**: Decrements the semaphore value and waits if zero.
-     - **`sem_delete`**: Removes a semaphore from the system.
+- `shmget`: Creates or accesses a shared memory segment.
+- `shmat`: Attaches a shared memory segment to the calling process's address space.
+- `shmdt`: Detaches a shared memory segment.
+- `shmctl`: Performs control operations on shared memory segments (e.g., remove segment).
 
-### 9. **`producer_consumer`**
-   - **Purpose**: Implements the producer-consumer problem using message queues and synchronization mechanisms.
+### Synchronization System Calls
 
+Semaphores are used for process synchronization. The following system calls are added:
 
-## Demonstration of Features
+- `seminit`: Initializes the semaphore system.
+- `sem_create`: Creates a semaphore.
+- `sem_wait`: Waits (blocks) on a semaphore.
+- `sem_signal`: Signals a semaphore, unblocking any waiting processes.
+- `sem_delete`: Deletes a semaphore.
 
-### User Program: `killpid.c`
+### `readcount` System Call
 
-To validate the implementation of `killpid` and `getppid`, we developed the `killpid.c` program, which demonstrates both functionalities.
+The `readcount` system call is designed to track the number of times the `read()` system call is invoked by a process. This is useful for debugging, logging, or monitoring the activity of processes that perform read operations.
 
+## User Programs
+
+The following user programs demonstrate the usage of the new system calls:
+
+- `user_killpid.c`: Demonstrates the `killpid` system call.
+- `user_getppid.c`: Retrieves and displays the parent process ID using `getppid`.
+- `user_msgqueue.c`: Implements operations on message queues (`msgget`, `msgsend`, `msgrcv`, `msgclose`).
+- `user_writershm.c` and `user_readershm.c`: Demonstrate shared memory usage (`shmget`, `shmat`, `shmdt`).
+- `user_sem_test.c`: Tests semaphore-based synchronization (`sem_create`, `sem_wait`, `sem_signal`).
+- `user_producer_consumer.c`: Implements a solution to the producer-consumer problem using semaphores.
+- `user_readcount1.c`: Demonstrates the `readcount` system call, tracking read system calls.
+- `user_readcount2.c`: Similar to `readcount1`, but uses pipes for communication.
 
 ## How to Build and Run
 
-### 1. **Build xv6**
-   Clone the repository and navigate to the xv6 directory:
-   ```bash
-   git clone <repo-url>
-   cd xv6-riscv
-   make clean
-   make qemu
-   ```
+### Building xv6
 
-# User Programs Execution Guide
-
-   - Execute the `killpid` program:
-     ```bash
-     user_killpid
-     ```
-
-   - **Get Parent Process ID**:
-     ```bash
-     user_getppid
-     ```
-
-   - **Message Queue Program**:
-     ```bash
-     user_msgqueue
-     ```
-
-   - **Writer Shared Memory Program**:
-     ```bash
-     user_writershm
-     ```
-
-   - **Reader Shared Memory Program**:
-     ```bash
-     user_readershm
-     ```
-
-   - **Read Count Program 1**:
-     ```bash
-     user_readcount1
-     ```
-
-   - **Read Count Program 2**:
-     ```bash
-     user_readcount2
-     ```
-
-   - **Semaphore Test Program**:
-     ```bash
-     user_sem_test
-     ```
-
-   - **Producer-Consumer Program**:
-     ```bash
-     user_producer_consumer
-     ```
+Clone the repository and build xv6 with the following commands:
 
 
-## Notes:
-- Ensure that the environment variable `USER_OBJ_DIR` is set to the correct directory where the user programs are located.
-- Each program can be executed individually using the respective command listed above.
+```bash
+git clone <repo-url>
+cd xv6-riscv
+make clean
+make qemu
+```
 
+### Executing User Programs
 
+Once xv6 is running, you can execute the user programs as follows:
 
----
-
-## Screenshots
-
-![Killpid Output](images/killpid_output.png)
-
----
+```bash
+user_killpid    # Demonstrates process termination
+user_getppid    # Retrieves the parent process ID
+user_msgqueue   # Demonstrates message queue operations
+user_writershm  # Writes to shared memory
+user_readershm  # Reads from shared memory
+user_sem_test   # Tests semaphore synchronization
+user_producer_consumer  # Producer-consumer problem solution
+user_readcount1 # Tracks read system calls
+user_readcount2 # Tracks read system calls using pipes
+```
 
